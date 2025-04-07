@@ -37,8 +37,8 @@ export class UserController {
         return this.userService.update(id, data);
     }
     @Delete(":id")
-    //  importância de se utilizar pipes (tubos), para transformar string em number
+    //  importante de se utilizar pipes (tubos), para transformar string em number
     async delete(@Param('id', ParseIntPipe) id: number) {
-        return {id}
+        return this.userService.delete(id)
     }
 }
