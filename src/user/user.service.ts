@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { OverwriteUserDTO } from "./dto/overwrite-user.dto";
@@ -20,6 +20,8 @@ export class UserSevice {
         });
     }
     async overwrite(id: number, {name, email, password, birthAt}:OverwriteUserDTO) {
+        await this.exists(id);
+        
         return this.prisma.user.update({
             data:{ 
                 name, 
@@ -30,7 +32,9 @@ export class UserSevice {
             where: {id}
         });
     }
-    async update(id: number, {name, email, password, birthAt}:UpdateUserDTO) { 
+    async update(id: number, {name, email, password, birthAt}:UpdateUserDTO) {
+        await this.exists(id);
+        
         const data: any = {}
         
         // condicionais para definir que se os parâmetros existirem no request, 
@@ -45,6 +49,12 @@ export class UserSevice {
         })
     }
     async delete(id: number) {
+        await this.exists(id);
         return this.prisma.user.delete({ where: {id} })
+    }
+    async exists(id: number) {
+        if (!(await this.readOne(id))) { // se não retornar nada crie uma exceção
+            throw new NotFoundException(`O usuário ${id} não existe.`)
+        }
     }
 }
