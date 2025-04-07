@@ -44,4 +44,8 @@ export class UserSevice {
             where:{id}
         })
     }
+
+    async delete(id: number) {
+        return this.prisma.user.delete({id})
+    }
 }
