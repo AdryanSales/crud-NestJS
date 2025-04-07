@@ -19,15 +19,26 @@ export class UserSevice {
             where: {id}
         });
     }
-    async overwrite(id: number, data:OverwriteUserDTO) {
-        console.log(data)
+    async overwrite(id: number, {name, email, password, birthAt}:OverwriteUserDTO) {
         return this.prisma.user.update({
-            data,
+            data:{ 
+                name, 
+                email, 
+                password, 
+                birthAt: birthAt ? new Date(birthAt) : null // se existir uma string definida, converte para Date, se não: define um valor nulo
+            },
             where: {id}
         });
     }
-    async update(id: number, data:UpdateUserDTO) {
-        console.log(data)
+    async update(id: number, {name, email, password, birthAt}:UpdateUserDTO) { 
+        const data: any = {}
+        
+        // condicionais para definir que se os parâmetros existirem no request, 
+        // eles devem ser enviados para seus campos correspondentes no banco de dados
+        if (name)       { data.name = name; }
+        if (email)      { data.email = email;}
+        if (password)   { data.password = password;}
+        if (birthAt)    { data.birthAt = new Date(birthAt);}
         return this.prisma.user.update({
             data,
             where:{id}
