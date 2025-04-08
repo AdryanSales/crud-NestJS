@@ -2,17 +2,23 @@ import {
     Controller,
     Post, Get, Put, Patch, Delete,   // CRUD
     Param, Body,
-    ParseIntPipe
+    ParseIntPipe,
+    UseInterceptors
 } from "@nestjs/common";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import { OverwriteUserDTO } from "./dto/overwrite-user.dto";
 import { UpdateUserDTO } from "./dto/update-user.dto";
 import { UserSevice } from "./user.service";
+// import { LogInterceptor } from "src/interceptors/log.interceptor"; // só importe se for utilizar nesse arquivo
 
+// Podemos usar Interceptors nos controles
+// @UseInterceptors(LogInterceptor)
 @Controller('users')
 export class UserController {
     constructor(private readonly userService: UserSevice){}
 
+    // Podemos usar Interceptors nos métodos
+    // @UseInterceptors(LogInterceptor)
     @Post()
     async create(@Body() data:CreateUserDTO) {
         return this.userService.create(data);
