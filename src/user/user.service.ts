@@ -15,13 +15,15 @@ export class UserSevice {
         return this.prisma.user.findMany();
     }
     async readOne(id: number) {
+        await this.exists(id);
+
         return this.prisma.user.findUnique({
             where: {id}
         });
     }
     async overwrite(id: number, {name, email, password, birthAt}:OverwriteUserDTO) {
         await this.exists(id);
-        
+
         return this.prisma.user.update({
             data:{ 
                 name, 
@@ -50,10 +52,13 @@ export class UserSevice {
     }
     async delete(id: number) {
         await this.exists(id);
+
         return this.prisma.user.delete({ where: {id} })
     }
     async exists(id: number) {
-        if (!(await this.readOne(id))) { // se não retornar nada crie uma exceção
+        if (!(await this.prisma.user.count({ // conte quantos registros há com esse id (1:true, 0:false)
+            where:{id}
+        }))) { // se não retornar nada crie uma exceção
             throw new NotFoundException(`O usuário ${id} não existe.`)
         }
     }
