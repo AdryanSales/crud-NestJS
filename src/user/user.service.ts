@@ -3,12 +3,16 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { OverwriteUserDTO } from './dto/overwrite-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreateUserDTO) {
+    const salt = await bcrypt.genSalt();
+    data.password = await bcrypt.hash(data.password, salt); // parametros(1, 2) 1: buffer, 2:tamanho do hash
+
     return this.prisma.user.create({ data });
   }
   async read() {
@@ -23,9 +27,12 @@ export class UserService {
   }
   async overwrite(
     id: number,
-    { name, email, password, birthAt }: OverwriteUserDTO,
+    { name, email, password, birthAt, role }: OverwriteUserDTO,
   ) {
     await this.exists(id);
+
+    const salt = await bcrypt.genSalt();
+    password = await bcrypt.hash(password, salt);
 
     return this.prisma.user.update({
       data: {
@@ -33,11 +40,15 @@ export class UserService {
         email,
         password,
         birthAt: birthAt ? new Date(birthAt) : null, // se existir uma string definida, converte para Date, se não: define um valor nulo
+        role,
       },
       where: { id },
     });
   }
-  async update(id: number, { name, email, password, birthAt }: UpdateUserDTO) {
+  async update(
+    id: number,
+    { name, email, password, birthAt, role }: UpdateUserDTO,
+  ) {
     await this.exists(id);
 
     const data: UpdateUserDTO = {};
@@ -51,10 +62,14 @@ export class UserService {
       data.email = email;
     }
     if (password) {
-      data.password = password;
+      const salt = await bcrypt.genSalt();
+      data.password = await bcrypt.hash(password, salt);
     }
     if (birthAt) {
       data.birthAt = birthAt;
+    }
+    if (role) {
+      data.role = role;
     }
     return this.prisma.user.update({
       data,
