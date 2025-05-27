@@ -5,10 +5,10 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthRegisterDTO } from './dto/auth-register.dto';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
 import { MailerService } from '@nestjs-modules/mailer/dist';
-import { UserEntity } from 'src/user/entity/user-entity';
+import { UserEntity } from '../user/entity/user-entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -34,7 +34,7 @@ export class AuthService {
           email: user.email,
         },
         {
-          expiresIn: '1 day',
+          expiresIn: '7 days',
           subject: String(user.id),
           issuer: this.issuer,
           audience: this.audience,
@@ -73,9 +73,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Email inválido.');
     }
-
-    const pwdMatch = await bcrypt.compare(password, user.password);
-    if (!pwdMatch) {
+    if (!(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Email e/ou senha incorretos.');
     }
 
@@ -100,6 +98,7 @@ export class AuthService {
         audience: 'users',
       },
     );
+
     await this.mailer.sendMail({
       subject: 'Recuperação de senha',
       to: 'adryan@mail.com',
@@ -137,6 +136,7 @@ export class AuthService {
   }
 
   async register(data: AuthRegisterDTO) {
+    delete data.role;
     const user = await this.userService.create(data);
     return this.createToken(user);
   }

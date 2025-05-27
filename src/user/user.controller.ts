@@ -9,15 +9,14 @@ import {
   Body,
   ParseIntPipe,
   UseGuards,
-  HttpCode,
 } from '@nestjs/common';
 import { OverwriteUserDTO } from './dto/overwrite-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { UserService } from './user.service';
-import { Roles } from 'src/decorators/role.decorator';
-import { Role } from 'src/enums/role.enum';
-import { RoleGuard } from 'src/guards/role.guard';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { Roles } from '../decorators/role.decorator';
+import { Role } from '../enums/role.enum';
+import { RoleGuard } from '../guards/role.guard';
+import { AuthGuard } from '../guards/auth.guard';
 // import { LogInterceptor } from "src/interceptors/log.interceptor"; // só importe se for utilizar nesse arquivo
 
 // Podemos usar Interceptors nos controles
