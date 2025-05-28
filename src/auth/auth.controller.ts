@@ -10,27 +10,26 @@ import {
   ParseFilePipe,
   FileTypeValidator,
   MaxFileSizeValidator,
+  Req,
 } from '@nestjs/common';
+import { AuthForgetDTO } from './dto/auth-forget.dto';
+import { AuthGuard } from '../guards/auth.guard';
 import { AuthLoginDTO } from './dto/auth-login.dto';
 import { AuthRegisterDTO } from './dto/auth-register.dto';
-import { AuthForgetDTO } from './dto/auth-forget.dto';
 import { AuthResetDTO } from './dto/auth-reset.dto';
-import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { User } from 'src/decorators/user.decorator';
 import {
   FileInterceptor,
   FilesInterceptor,
   FileFieldsInterceptor,
 } from '@nestjs/platform-express';
-import { join } from 'path';
-import { FileService } from 'src/file/file.service';
+import { FileService } from '../file/file.service';
+import { User } from '../decorators/user.decorator';
+import { UserEntity } from '../user/entity/user-entity';
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly userService: UserService,
     private readonly authService: AuthService,
     private readonly fileService: FileService,
   ) {} // uso do UserModule importado no 'auth.module.ts'
@@ -55,8 +54,8 @@ export class AuthController {
   }
   @UseGuards(AuthGuard)
   @Post('me')
-  async me(@User() user) {
-    return { user };
+  async me(@User() user: UserEntity) {
+    return user;
   }
 
   // dentro do FileInterceptor vai o nome do campo que está sendo passado na requisição
@@ -75,22 +74,15 @@ export class AuthController {
     )
     photo: Express.Multer.File,
   ) {
-    const path = join(
-      __dirname,
-      '..',
-      '..',
-      'storage',
-      'photos',
-      `photo-${user.id}.png`,
-    );
+    const filename = `photo-${user.id}.png`;
 
     try {
-      await this.fileService.upload(photo, path);
+      await this.fileService.upload(photo, filename);
     } catch (e) {
       throw new BadRequestException(e);
     }
 
-    return { sucess: true };
+    return photo;
   }
 
   @UseInterceptors(FilesInterceptor('files'))

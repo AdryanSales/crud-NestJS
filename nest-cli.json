@@ -4,9 +4,8 @@
   "sourceRoot": "src",
   "compilerOptions": {
 		"assets": [{
-			"deleteOutDir": true,
 			"include": "templates/**/*",
-			"outDir": "dist"
+			"outDir": "dist/src"
 		}]
   }
 }
