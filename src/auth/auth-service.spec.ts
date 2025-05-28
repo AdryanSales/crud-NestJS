@@ -63,7 +63,7 @@ describe('AuthService', () => {
 
     test('forget method', async () => {
       const result = await authService.forget('joao@mail.com');
-      expect(result).toEqual(true);
+      expect(result).toEqual({ success: true });
     });
     test('reset method', async () => {
       const result = await authService.reset('15926', resetToken);

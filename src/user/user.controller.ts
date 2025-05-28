@@ -68,6 +68,8 @@ export class UserController {
   @Delete(':id')
   //  importante de se utilizar pipes (tubos), para transformar string em number
   async delete(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.delete(id);
+    return {
+      success: await this.userService.delete(id),
+    };
   }
 }

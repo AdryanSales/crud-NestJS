@@ -1,15 +1,28 @@
+/* eslint-disable @typescript-eslint/await-thenable */
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
-import { writeFile } from 'fs';
+import { PathLike, writeFile } from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class FileService {
-  async upload(file: Express.Multer.File, path: string) {
-    return await writeFile(path, file.buffer, (err) => {
+  getDestinationPath() {
+    return join(
+      __dirname,
+      '..',
+      '..',
+      'storage',
+      'photos'
+    );
+  }
+
+  async upload(file: Express.Multer.File, filename: string) {
+		const path: PathLike = join(this.getDestinationPath(), filename)
+    await writeFile(path, file.buffer, (err) => {
       if (err) {
         console.log('erro: \n', err);
-      } else {
-        console.log('imagem salva!');
       }
     });
+		return path
   }
 }
