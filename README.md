@@ -98,13 +98,13 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 
-PLUS: 
-Para testar a redefinição de senha (forget and reset), no curso é indicado esse site:
+## IMPORTANT: 
+To test the password reset (forget and reset), the course recommends this site:
 https://ethereal.email/create 
 
-Por lá são fornecidas informações de login que precisam ser adaptadas ao testar.
+It provides login information that needs to be adapted when testing.
 
-mas se quiser usar o mesmo do projeto:
+But if you want to use the same one from the project, take it:
 + Name:	Oscar Wilkinson
 + Username:	oscar.wilkinson71@ethereal.email // !!!! this account can not be used for inbound emails !!!!
 + Password:	VKvb9EHcsmjy9DNyJS
